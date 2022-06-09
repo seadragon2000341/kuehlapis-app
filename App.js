@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import BlockRGB from "./components/BlockRGB";
 import { FlatList } from "react-native-gesture-handler";
 
-function HomeScreen() {
+function HomeScreen({ navigation }) {
   const [colorArray, setColorArray] = useState([
     { red: 255, green: 0, blue: 0, id: "0" },
     { red: 25, green: 0, blue: 0, id: "1" },
@@ -14,7 +14,17 @@ function HomeScreen() {
   ]);
 
   function renderItem({ item }) {
-    return <BlockRGB red={item.red} blue={item.blue} green={item.green} />;
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Details", {
+            ...item, //same as red=item.red, blue=item.blue
+          });
+        }}
+      >
+        <BlockRGB red={item.red} blue={item.blue} green={item.green} />
+      </TouchableOpacity>
+    );
   }
   function addColor() {
     setColorArray([
@@ -22,19 +32,37 @@ function HomeScreen() {
       {
         red: Math.floor(Math.random() * 256),
         blue: Math.floor(Math.random() * 256),
-        green: Mhath.floor(Math.random() * 256),
-        id: `${colorArray.length}`
-      }
-    ])
+        green: Math.floor(Math.random() * 256),
+        id: `${colorArray.length}`,
+      },
+    ]);
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={{height:40, justifyContent: 'center'}} onPress={addColor}><Text>Add Color</Text></TouchableOpacity>
+      <TouchableOpacity
+        style={{ height: 40, justifyContent: "center" }}
+        onPress={addColor}
+      >
+        <Text>Add Color</Text>
+      </TouchableOpacity>
       <FlatList style={styles.list} data={colorArray} renderItem={renderItem} />
     </View>
   );
 }
 
+function DetailsScreen({ route }) {
+  //props.routes destrucutre to {route}
+  const { red, green, blue } = route.params;
+  return (
+    <View style={[styles.detailsContainer, {
+
+      backgroundColor: `rgb(${red}, ${blue}, ${green})`
+    }]}>
+      <Text style={styles.detailsText}>{red}</Text>
+      <Text style={styles.detailsText}>{green}</Text>
+    </View>
+  );
+}
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -42,6 +70,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Details" component={DetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -52,4 +81,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
+  detailsContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  detailsText: {
+    fontSize: 30
+  }
 });
