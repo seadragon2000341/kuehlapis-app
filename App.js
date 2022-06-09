@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Button } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import BlockRGB from "./components/BlockRGB";
@@ -12,6 +12,12 @@ function HomeScreen({ navigation }) {
     { red: 25, green: 0, blue: 0, id: "1" },
     { red: 255, green: 255, blue: 0, id: "2" },
   ]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <Button onPress={addColor} title="Add Color" />,
+    });
+  });
 
   function renderItem({ item }) {
     return (
@@ -39,12 +45,12 @@ function HomeScreen({ navigation }) {
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={{ height: 40, justifyContent: "center" }}
         onPress={addColor}
       >
         <Text>Add Color</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <FlatList style={styles.list} data={colorArray} renderItem={renderItem} />
     </View>
   );
@@ -54,10 +60,14 @@ function DetailsScreen({ route }) {
   //props.routes destrucutre to {route}
   const { red, green, blue } = route.params;
   return (
-    <View style={[styles.detailsContainer, {
-
-      backgroundColor: `rgb(${red}, ${blue}, ${green})`
-    }]}>
+    <View
+      style={[
+        styles.detailsContainer,
+        {
+          backgroundColor: `rgb(${red}, ${blue}, ${green})`,
+        },
+      ]}
+    >
       <Text style={styles.detailsText}>{red}</Text>
       <Text style={styles.detailsText}>{green}</Text>
     </View>
@@ -84,9 +94,9 @@ const styles = StyleSheet.create({
   detailsContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   detailsText: {
-    fontSize: 30
-  }
+    fontSize: 30,
+  },
 });
